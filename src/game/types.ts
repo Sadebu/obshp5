@@ -38,6 +38,18 @@ export interface GameState {
   textSpeed: number;
   reducedAnimation: boolean;
   soundEnabled: boolean;
+  studentCode?: string;
+  completionTime?: number;
+  minigameScores?: Record<string, number>;
+}
+
+export interface StudentResult {
+  code: string;
+  name: string;
+  grade: number;
+  comment: string;
+  progress: GameState;
+  importedAt: string;
 }
 
 export interface SceneChoice {

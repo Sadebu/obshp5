@@ -3,6 +3,8 @@ import { GameState, Resources, DEFAULT_RESOURCES, DISTRICT_BONUSES, FAMILY_BONUS
 import { SCENES, GLOSSARY, ACHIEVEMENTS, ENDINGS } from './game/data';
 import { SVGIllustrations } from './game/svg';
 import { MiniGameWrapper } from './game/minigames';
+import { generateStudentCode, exportStudentProgress } from './game/teacher';
+import TeacherMode from './components/TeacherMode';
 
 // ===== INITIAL STATE =====
 const createInitialState = (): GameState => ({
@@ -99,7 +101,7 @@ const downloadHTML = async () => {
 
 // ===== APP COMPONENT =====
 export default function App() {
-  const [screen, setScreen] = useState<'start'|'creation'|'game'|'minigame'|'passport'|'ending'|'rules'|'glossary'|'settings'|'achievements'>('start');
+  const [screen, setScreen] = useState<'start'|'creation'|'game'|'minigame'|'passport'|'ending'|'rules'|'glossary'|'settings'|'achievements'|'teacher'>('start');
   const [gameState, setGameState] = useState<GameState>(createInitialState());
   const [modal, setModal] = useState<string | null>(null);
   const [achievementPopup, setAchievementPopup] = useState<{name: string; desc: string} | null>(null);
@@ -207,6 +209,13 @@ export default function App() {
           education: Math.min(100, newState.resources.education + bonus),
           reputation: Math.min(100, newState.resources.reputation + Math.round(bonus / 2)),
         };
+        // Save minigame score
+        if (currentMinigame) {
+          newState.minigameScores = {
+            ...newState.minigameScores,
+            [currentMinigame]: score
+          };
+        }
         return newState;
       });
     }
@@ -225,12 +234,15 @@ export default function App() {
     Object.entries(familyBonus).forEach(([k, v]) => {
       resources[k as keyof Resources] = Math.max(0, Math.min(100, resources[k as keyof Resources] + (v as number)));
     });
+    const studentCode = generateStudentCode();
     setGameState(prev => ({
       ...prev,
       character,
       resources,
+      studentCode,
+      minigameScores: {},
       statuses: {
-        prescribed: ['подросток', 'житель города Социум', 'представитель поколения Z', `житель ${character.district}`, character.gender === 'М' ? 'сын своей семьи' : 'дочь своей семьи'],
+        prescribed: ['подросток', 'житель города Социума', 'представитель поколения Z', `житель ${character.district}`, character.gender === 'М' ? 'сын своей семьи' : 'дочь своей семьи'],
         achieved: ['школьник'],
       },
     }));
@@ -283,10 +295,27 @@ export default function App() {
           {SVGIllustrations.network && <div className="scene-illustration" style={{maxWidth: 400, marginBottom: '2rem'}}>{React.createElement(SVGIllustrations.network, {className: ''})}</div>}
           <h1 className="game-title">СОЦИУМ</h1>
           <p className="game-subtitle">жизнь в обществе</p>
-          <p style={{color: 'var(--text-secondary)', marginBottom: '2rem', maxWidth: 500, fontSize: '0.9rem'}}>
+          <p style={{color: 'var(--text-secondary)', marginBottom: '1.5rem', maxWidth: 500, fontSize: '0.9rem'}}>
             Обучающая игра по обществознанию §5.<br/>
             Общество как система. Человек в системе социальных взаимодействий.
           </p>
+          
+          <div style={{
+            background: 'rgba(139,92,246,0.1)',
+            border: '2px solid var(--accent-purple)',
+            borderRadius: '12px',
+            padding: '1rem',
+            marginBottom: '2rem',
+            maxWidth: 500,
+            textAlign: 'left'
+          }}>
+            <div style={{fontSize: '0.85rem', color: 'var(--accent-purple)', fontWeight: 600, marginBottom: '0.5rem'}}>
+              👨‍🏫 Для учителей:
+            </div>
+            <div style={{fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5}}>
+              Отслеживайте прогресс учеников, выставляйте оценки и экспортируйте отчёты через <strong>"Режим учителя"</strong>
+            </div>
+          </div>
           <div className="start-buttons">
             <button className="btn btn-primary" onClick={() => setScreen('creation')}>Новая игра</button>
             {loadGame() && (
@@ -298,8 +327,11 @@ export default function App() {
             <button className="btn btn-secondary" onClick={() => setScreen('rules')}>Правила</button>
             <button className="btn btn-secondary" onClick={() => setScreen('glossary')}>Глоссарий</button>
             <button className="btn btn-secondary" onClick={() => setScreen('settings')}>Настройки</button>
-            <button className="btn btn-secondary" onClick={downloadHTML} style={{marginTop: '1rem', background: 'linear-gradient(135deg, #10b981, #059669)', color: '#fff', border: 'none'}}>
+            <button className="btn btn-secondary" onClick={downloadHTML} style={{marginTop: '0.5rem', background: 'linear-gradient(135deg, #10b981, #059669)', color: '#fff', border: 'none'}}>
               📥 Скачать HTML
+            </button>
+            <button className="btn btn-secondary" onClick={() => setScreen('teacher')} style={{background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', color: '#fff', border: 'none'}}>
+              👨‍🏫 Режим учителя
             </button>
           </div>
         </div>
@@ -435,6 +467,9 @@ export default function App() {
       {/* CHARACTER CREATION */}
       {screen === 'creation' && <CharacterCreation onCreate={createCharacter} onBack={() => setScreen('start')}/>}
 
+      {/* TEACHER MODE */}
+      {screen === 'teacher' && <TeacherMode onBack={() => setScreen('start')}/>}
+
       {/* GAME SCREEN */}
       {screen === 'game' && currentSceneData && (
         <div className="game-screen">
@@ -466,6 +501,20 @@ export default function App() {
 
           {/* Status bar */}
           <div className="status-bar">
+            {gameState.studentCode && (
+              <span style={{
+                fontSize: '0.7rem',
+                color: 'var(--accent-purple)',
+                background: 'rgba(155,89,182,0.15)',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '8px',
+                fontFamily: 'monospace',
+                fontWeight: 600,
+                marginRight: '0.5rem'
+              }}>
+                🎓 {gameState.studentCode}
+              </span>
+            )}
             <span style={{fontSize: '0.75rem', color: 'var(--text-secondary)'}}>Статусы:</span>
             {gameState.statuses.prescribed.slice(0, 3).map(s => (
               <span key={s} className="status-badge prescribed">{s}</span>
@@ -519,8 +568,12 @@ export default function App() {
             <button className="btn btn-secondary btn-small" onClick={() => setModal('journal')}>📓 Журнал</button>
             <button className="btn btn-secondary btn-small" onClick={() => setScreen('glossary')}>📚 Глоссарий</button>
             <button className="btn btn-secondary btn-small" onClick={() => setScreen('achievements')}>🏆 Ачивки</button>
-            <button className="btn btn-secondary btn-small" onClick={() => setScreen('settings')}>⚙️</button>
             <button className="btn btn-secondary btn-small" onClick={() => saveGame(gameState)}>💾 Сохранить</button>
+            {gameState.studentCode && (
+              <button className="btn btn-secondary btn-small" onClick={() => exportStudentProgress(gameState)} style={{background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', color: '#fff', border: 'none'}}>
+                📤 Экспорт для учителя
+              </button>
+            )}
             <button className="btn btn-secondary btn-small" onClick={downloadHTML} style={{background: 'linear-gradient(135deg, #10b981, #059669)', color: '#fff', border: 'none'}}>📥 Скачать</button>
           </div>
         </div>
@@ -591,6 +644,31 @@ export default function App() {
             <div className="passport-header">
               <h2>📋 Социологический паспорт</h2>
               <p style={{color: 'var(--text-secondary)', fontSize: '0.85rem'}}>г. Социум</p>
+              {gameState.studentCode && (
+                <div style={{
+                  marginTop: '1rem',
+                  padding: '0.75rem',
+                  background: 'rgba(155,89,182,0.15)',
+                  borderRadius: '12px',
+                  border: '2px solid var(--accent-purple)'
+                }}>
+                  <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.25rem'}}>
+                    Ваш код ученика:
+                  </div>
+                  <div style={{
+                    fontSize: '1.5rem',
+                    fontFamily: 'monospace',
+                    fontWeight: 800,
+                    color: 'var(--accent-purple)',
+                    letterSpacing: '0.1em'
+                  }}>
+                    {gameState.studentCode}
+                  </div>
+                  <div style={{fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.5rem'}}>
+                    Запишите этот код и передайте его учителю
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="passport-section">
@@ -670,6 +748,11 @@ export default function App() {
               const text = `СОЦИОЛОГИЧЕСКИЙ ПАСПОРТ\nПерсонаж: ${gameState.character?.name}\nСтратa: ${gameState.strata}\nСтатусы: ${gameState.statuses.achieved.join(', ')}\nРоли: ${gameState.roles.join(', ')}`;
               navigator.clipboard?.writeText(text).then(() => alert('Паспорт скопирован!'));
             }}>📋 Копировать</button>
+            {gameState.studentCode && (
+              <button className="btn btn-secondary" onClick={() => exportStudentProgress(gameState)} style={{background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', color: '#fff', border: 'none'}}>
+                📤 Экспорт для учителя
+              </button>
+            )}
           </div>
         </div>
       )}
