@@ -6,49 +6,57 @@ export const SVGIllustrations: Record<string, React.FC<{className?: string}>> = 
     <svg viewBox="0 0 400 200" className={className} xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#1a1a4e"/>
-          <stop offset="100%" stopColor="#4a2c7a"/>
+          <stop offset="0%" stopColor="#0f0c29"/>
+          <stop offset="50%" stopColor="#302b63"/>
+          <stop offset="100%" stopColor="#24243e"/>
         </linearGradient>
         <linearGradient id="bld1" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor="#2d3561"/>
           <stop offset="100%" stopColor="#1a1a3e"/>
         </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
       </defs>
       <rect width="400" height="200" fill="url(#sky)"/>
-      {/* Buildings */}
-      <rect x="20" y="80" width="40" height="120" fill="#2d3561" rx="2"/>
-      <rect x="25" y="85" width="8" height="8" fill="#ffd700" opacity="0.7"/>
-      <rect x="37" y="85" width="8" height="8" fill="#ffd700" opacity="0.5"/>
-      <rect x="25" y="100" width="8" height="8" fill="#ffd700" opacity="0.6"/>
-      <rect x="37" y="100" width="8" height="8" fill="#ffd700" opacity="0.8"/>
-      <rect x="25" y="115" width="8" height="8" fill="#ffd700" opacity="0.4"/>
-      <rect x="37" y="115" width="8" height="8" fill="#ffd700" opacity="0.7"/>
-      <rect x="70" y="60" width="50" height="140" fill="#3d4571" rx="2"/>
-      <rect x="75" y="65" width="10" height="10" fill="#00d4aa" opacity="0.6"/>
-      <rect x="90" y="65" width="10" height="10" fill="#00d4aa" opacity="0.8"/>
-      <rect x="105" y="65" width="10" height="10" fill="#00d4aa" opacity="0.5"/>
-      <rect x="75" y="80" width="10" height="10" fill="#00d4aa" opacity="0.7"/>
-      <rect x="90" y="80" width="10" height="10" fill="#00d4aa" opacity="0.4"/>
-      <rect x="105" y="80" width="10" height="10" fill="#00d4aa" opacity="0.9"/>
-      <rect x="130" y="100" width="35" height="100" fill="#4a3570" rx="2"/>
-      <rect x="175" y="50" width="60" height="150" fill="#2d4561" rx="3"/>
-      <rect x="180" y="55" width="12" height="12" fill="#ff6b6b" opacity="0.6"/>
-      <rect x="197" y="55" width="12" height="12" fill="#ff6b6b" opacity="0.8"/>
-      <rect x="214" y="55" width="12" height="12" fill="#ff6b6b" opacity="0.5"/>
-      <rect x="180" y="72" width="12" height="12" fill="#ff6b6b" opacity="0.7"/>
-      <rect x="197" y="72" width="12" height="12" fill="#ff6b6b" opacity="0.9"/>
-      <rect x="214" y="72" width="12" height="12" fill="#ff6b6b" opacity="0.4"/>
-      <rect x="245" y="90" width="45" height="110" fill="#3d5571" rx="2"/>
-      <rect x="300" y="70" width="55" height="130" fill="#4a4570" rx="2"/>
-      <rect x="365" y="110" width="35" height="90" fill="#2d3561" rx="2"/>
-      {/* Stars */}
-      <circle cx="50" cy="20" r="1.5" fill="#fff" opacity="0.8"/>
-      <circle cx="150" cy="15" r="1" fill="#fff" opacity="0.6"/>
-      <circle cx="250" cy="25" r="1.5" fill="#fff" opacity="0.7"/>
-      <circle cx="350" cy="18" r="1" fill="#fff" opacity="0.9"/>
-      <circle cx="320" cy="35" r="1" fill="#fff" opacity="0.5"/>
+      {/* Buildings with more detail */}
+      <rect x="20" y="80" width="40" height="120" fill="#2d3561" rx="3"/>
+      <rect x="25" y="85" width="8" height="8" fill="#ffd700" opacity="0.8" filter="url(#glow)"/>
+      <rect x="37" y="85" width="8" height="8" fill="#ffd700" opacity="0.6" filter="url(#glow)"/>
+      <rect x="25" y="100" width="8" height="8" fill="#ffd700" opacity="0.7" filter="url(#glow)"/>
+      <rect x="37" y="100" width="8" height="8" fill="#ffd700" opacity="0.9" filter="url(#glow)"/>
+      <rect x="25" y="115" width="8" height="8" fill="#ffd700" opacity="0.5" filter="url(#glow)"/>
+      <rect x="37" y="115" width="8" height="8" fill="#ffd700" opacity="0.8" filter="url(#glow)"/>
+      <rect x="70" y="60" width="50" height="140" fill="#3d4571" rx="3"/>
+      <rect x="75" y="65" width="10" height="10" fill="#00d4aa" opacity="0.7" filter="url(#glow)"/>
+      <rect x="90" y="65" width="10" height="10" fill="#00d4aa" opacity="0.9" filter="url(#glow)"/>
+      <rect x="105" y="65" width="10" height="10" fill="#00d4aa" opacity="0.6" filter="url(#glow)"/>
+      <rect x="75" y="80" width="10" height="10" fill="#00d4aa" opacity="0.8" filter="url(#glow)"/>
+      <rect x="90" y="80" width="10" height="10" fill="#00d4aa" opacity="0.5" filter="url(#glow)"/>
+      <rect x="105" y="80" width="10" height="10" fill="#00d4aa" opacity="1" filter="url(#glow)"/>
+      <rect x="130" y="100" width="35" height="100" fill="#4a3570" rx="3"/>
+      <rect x="175" y="50" width="60" height="150" fill="#2d4561" rx="4"/>
+      <rect x="180" y="55" width="12" height="12" fill="#ff6b6b" opacity="0.7" filter="url(#glow)"/>
+      <rect x="197" y="55" width="12" height="12" fill="#ff6b6b" opacity="0.9" filter="url(#glow)"/>
+      <rect x="214" y="55" width="12" height="12" fill="#ff6b6b" opacity="0.6" filter="url(#glow)"/>
+      <rect x="180" y="72" width="12" height="12" fill="#ff6b6b" opacity="0.8" filter="url(#glow)"/>
+      <rect x="197" y="72" width="12" height="12" fill="#ff6b6b" opacity="1" filter="url(#glow)"/>
+      <rect x="214" y="72" width="12" height="12" fill="#ff6b6b" opacity="0.5" filter="url(#glow)"/>
+      <rect x="245" y="90" width="45" height="110" fill="#3d5571" rx="3"/>
+      <rect x="300" y="70" width="55" height="130" fill="#4a4570" rx="3"/>
+      <rect x="365" y="110" width="35" height="90" fill="#2d3561" rx="3"/>
+      {/* Stars with glow */}
+      <circle cx="50" cy="20" r="2" fill="#fff" opacity="0.9" filter="url(#glow)"/>
+      <circle cx="150" cy="15" r="1.5" fill="#fff" opacity="0.7" filter="url(#glow)"/>
+      <circle cx="250" cy="25" r="2" fill="#fff" opacity="0.8" filter="url(#glow)"/>
+      <circle cx="350" cy="18" r="1.5" fill="#fff" opacity="1" filter="url(#glow)"/>
+      <circle cx="320" cy="35" r="1.5" fill="#fff" opacity="0.6" filter="url(#glow)"/>
+      {/* Moon */}
+      <circle cx="350" cy="40" r="15" fill="#ffd700" opacity="0.3"/>
+      <circle cx="350" cy="40" r="12" fill="#ffd700" opacity="0.5"/>
       {/* Label */}
-      <text x="200" y="195" textAnchor="middle" fill="#00d4aa" fontSize="10" fontFamily="sans-serif">Город Социум</text>
+      <text x="200" y="195" textAnchor="middle" fill="#00d4aa" fontSize="11" fontFamily="sans-serif" fontWeight="bold" filter="url(#glow)">Город Социум</text>
     </svg>
   ),
   school: ({className}) => (

@@ -141,11 +141,11 @@ export const SocialElevator: React.FC<MiniGameProps> = ({ onComplete }) => {
   const [currentFloor, setCurrentFloor] = useState(0);
   const [score, setScore] = useState(0);
   const floors = [
-    { name: 'Старт', options: ['Бросить школу', 'Учиться в университете', 'Работать без квалификации'], correct: 1, lift: true },
-    { name: 'Образование', options: ['Бросить учёбу', 'Получить диплом с отличием', 'Отчислиться'], correct: 1, lift: true },
+    { name: 'Старт', options: ['Не продолжать обучение', 'Учиться в университете', 'Работать без квалификации'], correct: 1, lift: true },
+    { name: 'Образование', options: ['Прекратить обучение', 'Получить диплом с отличием', 'Оставить учёбу'], correct: 1, lift: true },
     { name: 'Карьера', options: ['Менять работу каждый месяц', 'Стать экспертом в своей области', 'Не развиваться'], correct: 1, lift: true },
     { name: 'Брак', options: ['Создать семью с поддержкой', 'Одиночество', 'Брак по расчёту'], correct: 0, lift: true },
-    { name: 'Бизнес', options: ['Рискованный бизнес без плана', 'Социальное предприятие', 'Криминал'], correct: 1, lift: true },
+    { name: 'Бизнес', options: ['Рискованный бизнес без плана', 'Социальное предприятие', 'Незаконная деятельность'], correct: 1, lift: true },
     { name: 'Вершина', options: ['Признание в обществе', 'Изоляция', 'Потеря всего'], correct: 0, lift: true },
   ];
 
@@ -245,7 +245,7 @@ export const ConflictKnot: React.FC<MiniGameProps> = ({ onComplete }) => {
   const [score, setScore] = useState(0);
   const questions = [
     {
-      situation: 'Соседи ссорятся из-за шума. Один недавно потерял работу и в депрессии.',
+      situation: 'Соседи ссорятся из-за шума. Один недавно потерял работу и переживает трудный период.',
       cause: 'Стресс и социальное неравенство',
       excuse: 'Громкая музыка',
       options: { cause: ['Стресс и социальное неравенство', 'Громкая музыка', 'Плохая звукоизоляция'], excuse: ['Громкая музыка', 'Стресс', 'Плохой характер'] }
