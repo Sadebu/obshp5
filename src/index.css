@@ -1,5 +1,3 @@
-@import "tailwindcss";
-
 :root {
   --bg-primary: #0f0f2e;
   --bg-secondary: #1a1a4e;
@@ -21,7 +19,7 @@
 }
 
 body {
-  font-family: 'Nunito', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, #2d1b4e 100%);
   color: var(--text-primary);
   min-height: 100vh;
@@ -29,10 +27,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  position: relative;
 }
 
 h1, h2, h3, h4, h5, h6, .game-title, .scene-title, .ending-title, .creation-title, .passport-header h2 {
-  font-family: 'Playfair Display', 'Georgia', serif;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 900;
+}
+
+/* Ensure all interactive elements are clickable */
+button, a, input, select, textarea, [role="button"] {
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
 }
 
 #root {
@@ -61,7 +68,13 @@ h1, h2, h3, h4, h5, h6, .game-title, .scene-title, .ending-title, .creation-titl
   bottom: 0;
   background: radial-gradient(circle at 30% 40%, rgba(0,212,170,0.1) 0%, transparent 50%),
               radial-gradient(circle at 70% 60%, rgba(155,89,182,0.1) 0%, transparent 50%);
-  pointer-events: none;
+  pointer-events: none !important;
+  z-index: 0;
+}
+
+.start-screen > * {
+  position: relative;
+  z-index: 1;
 }
 
 .game-title {
@@ -537,6 +550,7 @@ h1, h2, h3, h4, h5, h6, .game-title, .scene-title, .ending-title, .creation-titl
   opacity: 0.5;
   animation: shimmer 3s linear infinite;
   background-size: 200% 100%;
+  pointer-events: none !important;
 }
 
 .scene-illustration svg,
@@ -1700,4 +1714,24 @@ h1, h2, h3, h4, h5, h6, .game-title, .scene-title, .ending-title, .creation-titl
 ::-webkit-scrollbar-thumb {
   background: var(--accent-teal);
   border-radius: 3px;
+}
+
+/* Fix: All decorative pseudo-elements should not block clicks */
+*::before,
+*::after {
+  pointer-events: none !important;
+}
+
+/* Ensure buttons and interactive elements are always clickable */
+button, 
+.btn, 
+.choice-btn, 
+.radio-option, 
+a, 
+input, 
+select, 
+textarea {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 100;
 }

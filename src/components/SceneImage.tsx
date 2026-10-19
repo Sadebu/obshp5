@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { SVGIllustrations } from '../game/svg';
 
 interface SceneImageProps {
   type: string;
@@ -6,6 +7,8 @@ interface SceneImageProps {
 }
 
 export const SceneImage: React.FC<SceneImageProps> = ({ type, className = '' }) => {
+  const [imageError, setImageError] = useState(false);
+  
   const images: Record<string, string> = {
     city: 'https://image.qwenlm.ai/generated-images/a2f978f3-1b21-4537-b44c-b6d01340380e/_result.png',
     school: 'https://image.qwenlm.ai/generated-images/9935b138-c9f4-4d5e-8edb-0990ca02d723/_result.png',
@@ -22,6 +25,15 @@ export const SceneImage: React.FC<SceneImageProps> = ({ type, className = '' }) 
   };
 
   const imageUrl = images[type] || images.city;
+  
+  // Fallback to SVG if image fails to load
+  if (imageError && SVGIllustrations[type]) {
+    return (
+      <div className={`scene-illustration ${className}`}>
+        {React.createElement(SVGIllustrations[type], { className: '' })}
+      </div>
+    );
+  }
 
   return (
     <div className={`scene-image-container ${className}`}>
@@ -30,6 +42,8 @@ export const SceneImage: React.FC<SceneImageProps> = ({ type, className = '' }) 
         alt={type}
         className="scene-image"
         loading="lazy"
+        onError={() => setImageError(true)}
+        style={{ pointerEvents: 'none' }}
       />
     </div>
   );
