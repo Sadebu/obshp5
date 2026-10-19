@@ -37,6 +37,66 @@ const loadGame = (): GameState | null => {
   } catch(e) { return null; }
 };
 
+// ===== DOWNLOAD HTML =====
+const downloadHTML = async () => {
+  try {
+    // Получаем текущий HTML
+    const html = document.documentElement.outerHTML;
+    
+    // Находим все внешние CSS и JS файлы
+    const cssLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+    const jsScripts = Array.from(document.querySelectorAll('script[src]'));
+    
+    let finalHTML = html;
+    
+    // Загружаем и встраиваем CSS
+    for (const link of cssLinks) {
+      const href = link.getAttribute('href');
+      if (href) {
+        try {
+          const response = await fetch(href);
+          const css = await response.text();
+          const styleTag = `<style>${css}</style>`;
+          finalHTML = finalHTML.replace(link.outerHTML, styleTag);
+        } catch (e) {
+          console.warn('Не удалось загрузить CSS:', href);
+        }
+      }
+    }
+    
+    // Загружаем и встраиваем JS
+    for (const script of jsScripts) {
+      const src = script.getAttribute('src');
+      if (src) {
+        try {
+          const response = await fetch(src);
+          const js = await response.text();
+          const scriptTag = `<script>${js}<\/script>`;
+          finalHTML = finalHTML.replace(script.outerHTML, scriptTag);
+        } catch (e) {
+          console.warn('Не удалось загрузить JS:', src);
+        }
+      }
+    }
+    
+    // Создаем Blob и скачиваем
+    const blob = new Blob([finalHTML], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'СОЦИУМ-игра.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    alert('✅ Игра успешно скачана!\nОткройте файл "СОЦИУМ-игра.html" в браузере.');
+  } catch (error) {
+    console.error('Ошибка при скачивании:', error);
+    alert('❌ Не удалось скачать файл. Попробуйте ещё раз.');
+  }
+};
+
 // ===== APP COMPONENT =====
 export default function App() {
   const [screen, setScreen] = useState<'start'|'creation'|'game'|'minigame'|'passport'|'ending'|'rules'|'glossary'|'settings'|'achievements'>('start');
@@ -238,6 +298,9 @@ export default function App() {
             <button className="btn btn-secondary" onClick={() => setScreen('rules')}>Правила</button>
             <button className="btn btn-secondary" onClick={() => setScreen('glossary')}>Глоссарий</button>
             <button className="btn btn-secondary" onClick={() => setScreen('settings')}>Настройки</button>
+            <button className="btn btn-secondary" onClick={downloadHTML} style={{marginTop: '1rem', background: 'linear-gradient(135deg, #10b981, #059669)', color: '#fff', border: 'none'}}>
+              📥 Скачать HTML
+            </button>
           </div>
         </div>
       )}
@@ -458,6 +521,7 @@ export default function App() {
             <button className="btn btn-secondary btn-small" onClick={() => setScreen('achievements')}>🏆 Ачивки</button>
             <button className="btn btn-secondary btn-small" onClick={() => setScreen('settings')}>⚙️</button>
             <button className="btn btn-secondary btn-small" onClick={() => saveGame(gameState)}>💾 Сохранить</button>
+            <button className="btn btn-secondary btn-small" onClick={downloadHTML} style={{background: 'linear-gradient(135deg, #10b981, #059669)', color: '#fff', border: 'none'}}>📥 Скачать</button>
           </div>
         </div>
       )}
@@ -515,6 +579,7 @@ export default function App() {
             <button className="btn btn-secondary" onClick={() => { setGameState(prev => ({...prev, ending: null})); setScreen('creation'); }}>Другой персонаж</button>
             <button className="btn btn-secondary" onClick={() => setScreen('passport')}>Социологический паспорт</button>
             <button className="btn btn-secondary" onClick={() => setScreen('glossary')}>Глоссарий</button>
+            <button className="btn btn-secondary" onClick={downloadHTML} style={{background: 'linear-gradient(135deg, #10b981, #059669)', color: '#fff', border: 'none'}}>📥 Скачать HTML</button>
           </div>
         </div>
       )}
