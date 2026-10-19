@@ -5,6 +5,7 @@ import { SVGIllustrations } from './game/svg';
 import { MiniGameWrapper } from './game/minigames';
 import { generateStudentCode, exportStudentProgress } from './game/teacher';
 import TeacherMode from './components/TeacherMode';
+import { SceneImage } from './components/SceneImage';
 
 // ===== INITIAL STATE =====
 const createInitialState = (): GameState => ({
@@ -292,7 +293,9 @@ export default function App() {
       {/* START SCREEN */}
       {screen === 'start' && (
         <div className="start-screen">
-          {SVGIllustrations.network && <div className="scene-illustration" style={{maxWidth: 400, marginBottom: '2rem'}}>{React.createElement(SVGIllustrations.network, {className: ''})}</div>}
+          <div style={{maxWidth: 400, marginBottom: '2rem'}}>
+            <SceneImage type="network" />
+          </div>
           <h1 className="game-title">СОЦИУМ</h1>
           <p className="game-subtitle">жизнь в обществе</p>
           <p style={{color: 'var(--text-secondary)', marginBottom: '1.5rem', maxWidth: 500, fontSize: '0.9rem'}}>
@@ -534,10 +537,8 @@ export default function App() {
             <h2 className="scene-title">{currentSceneData.title}</h2>
             
             {/* Illustration */}
-            {currentSceneData.illustration && SVGIllustrations[currentSceneData.illustration] && (
-              <div className="scene-illustration">
-                {React.createElement(SVGIllustrations[currentSceneData.illustration], {className: ''})}
-              </div>
+            {currentSceneData.illustration && (
+              <SceneImage type={currentSceneData.illustration} />
             )}
 
             <div className="scene-text">{currentSceneData.text}</div>
@@ -591,7 +592,9 @@ export default function App() {
       {/* ENDING SCREEN */}
       {screen === 'ending' && gameState.ending && (
         <div className="ending-screen">
-          {SVGIllustrations.passport && <div className="scene-illustration" style={{maxWidth: 300, marginBottom: '2rem'}}>{React.createElement(SVGIllustrations.passport, {className: ''})}</div>}
+          <div style={{maxWidth: 300, marginBottom: '2rem'}}>
+            <SceneImage type="passport" />
+          </div>
           <h1 className="ending-title">{ENDINGS[gameState.ending as keyof typeof ENDINGS]?.title}</h1>
           <p className="ending-text">{ENDINGS[gameState.ending as keyof typeof ENDINGS]?.text}</p>
           

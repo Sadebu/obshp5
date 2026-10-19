@@ -21,7 +21,7 @@
 }
 
 body {
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  font-family: 'Nunito', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, #2d1b4e 100%);
   color: var(--text-primary);
   min-height: 100vh;
@@ -29,6 +29,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6, .game-title, .scene-title, .ending-title, .creation-title, .passport-header h2 {
+  font-family: 'Playfair Display', 'Georgia', serif;
 }
 
 #root {
@@ -535,15 +539,55 @@ body {
   background-size: 200% 100%;
 }
 
-.scene-illustration svg {
+.scene-illustration svg,
+.scene-illustration img {
   width: 100%;
   height: auto;
   display: block;
   transition: transform 0.3s ease;
 }
 
-.scene-illustration:hover svg {
+.scene-illustration:hover svg,
+.scene-illustration:hover img {
   transform: scale(1.02);
+}
+
+.scene-image-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 1.5rem;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  animation: fadeInUp 0.5s ease, float 4s ease-in-out infinite;
+  position: relative;
+}
+
+.scene-image-container::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(45deg, var(--accent-teal), var(--accent-purple), var(--accent-yellow), var(--accent-coral));
+  border-radius: 19px;
+  z-index: -1;
+  opacity: 0.6;
+  animation: shimmer 3s linear infinite;
+  background-size: 200% 100%;
+}
+
+.scene-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+  border-radius: 16px;
+}
+
+.scene-image-container:hover .scene-image {
+  transform: scale(1.03);
 }
 
 @keyframes fadeInUp {
