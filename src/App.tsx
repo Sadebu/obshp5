@@ -41,49 +41,23 @@ const loadGame = (): GameState | null => {
 };
 
 // ===== DOWNLOAD HTML =====
-const downloadHTML = async () => {
+const downloadHTML = () => {
   try {
-    // Получаем текущий HTML
-    const html = document.documentElement.outerHTML;
+    // Получаем текущий HTML (все CSS и JS уже встроены плагином vite-plugin-singlefile)
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
     
-    // Находим все внешние CSS и JS файлы
-    const cssLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
-    const jsScripts = Array.from(document.querySelectorAll('script[src]'));
-    
-    let finalHTML = html;
-    
-    // Загружаем и встраиваем CSS
-    for (const link of cssLinks) {
-      const href = link.getAttribute('href');
-      if (href) {
-        try {
-          const response = await fetch(href);
-          const css = await response.text();
-          const styleTag = `<style>${css}</style>`;
-          finalHTML = finalHTML.replace(link.outerHTML, styleTag);
-        } catch (e) {
-          console.warn('Не удалось загрузить CSS:', href);
-        }
-      }
+    // Очищаем root div, чтобы React мог перерисовать при открытии
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const root = doc.querySelector('#root');
+    if (root) {
+      root.innerHTML = '';
     }
     
-    // Загружаем и встраиваем JS
-    for (const script of jsScripts) {
-      const src = script.getAttribute('src');
-      if (src) {
-        try {
-          const response = await fetch(src);
-          const js = await response.text();
-          const scriptTag = `<script>${js}<\/script>`;
-          finalHTML = finalHTML.replace(script.outerHTML, scriptTag);
-        } catch (e) {
-          console.warn('Не удалось загрузить JS:', src);
-        }
-      }
-    }
+    const cleanHTML = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
     
     // Создаем Blob и скачиваем
-    const blob = new Blob([finalHTML], { type: 'text/html;charset=utf-8' });
+    const blob = new Blob([cleanHTML], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
